@@ -19,10 +19,11 @@ if __name__ == "__main__":
     print("welcome to the show\n")
 
 def startGame():
+    playerTurn = 1 
     # In order to stop playing set stillPlaying to false
     stillPlaying = True
     while stillPlaying:
-
+        
 
 class player():
     def __init__(self, currMoney, team):
