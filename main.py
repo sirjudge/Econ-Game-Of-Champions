@@ -27,10 +27,10 @@ def readCommands(player):
         playerTeamName = player.getTeam()
 
         # Read Command line input
-        command = input('What do you want to do?')
+        commandInput = input('What do you want to do?')
 
         # Exit condition, confirm on exit
-        if command == 'exit':
+        if commandInput == 'exit':
             print( 'are you sure you want to finish your turn?')
             commandInput = input("yes or no?")
             if commandInput.lower() == 'yes' or commandInput.lower() == 'y':
@@ -39,7 +39,7 @@ def readCommands(player):
                 print('continuing turn')
         elif commandInput == 'trade':
             playerToTrade = input('What player do you want to trade with?')
-            amountToTrade = input('How much do you want o trade?')
+            amountToTrade = int(input('How much do you want to trade?'))
             player.tradeMoney(playerToTrade,amountToTrade)
         elif commandInput == 'help':
             print('please use the following commands')
