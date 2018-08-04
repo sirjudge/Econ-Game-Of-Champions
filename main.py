@@ -5,14 +5,18 @@ __turnNum = 0
 __player = []
 
 def startGame():
+    # keeps track of which player is currently doing their turn
     playerTurn = 0
+    # Keeps track of which turn the game is on
+    gameTurn = 0
     # In order to stop playing set stillPlaying to false
     stillPlaying = True
     while stillPlaying:
         currPlayer = __player[playerTurn]
         readCommands(currPlayer)
         if playerTurn == __numPlayers:
-            playerTurn = 1
+            playerTurn = 0
+            gameTurn += 1
         else:
             playerTurn += 1
         print('your turn is over' + currPlayer.getName())
@@ -30,13 +34,21 @@ def readCommands(player):
         commandInput = input('What do you want to do?')
 
         # Exit condition, confirm on exit
-        if commandInput == 'exit':
+        if commandInput == 'finish':
             print( 'are you sure you want to finish your turn?')
             commandInput = input("yes or no?")
             if commandInput.lower() == 'yes' or commandInput.lower() == 'y':
                 turnInProgress = False
             else:
                 print('continuing turn')
+        elif commandInput == 'exit':
+            print('are you sure you want to finish your turn?')
+            commandInput = input('yes or no')
+            if commandInput.lower() == 'yes' or commandInput.lower() == 'y':
+                exit()
+            else:
+                print('continuing turn')
+
         elif commandInput == 'trade':
             playerToTrade = input('What player do you want to trade with?')
             amountToTrade = int(input('How much do you want to trade?'))
@@ -94,16 +106,17 @@ if __name__ == "__main__":
     while intCheck:
         # Make sure user input is valid
         try:
-            numPlayers = int(numPlayersInput)
+            if numPlayersInput == '':
+                __numPlayers = 2
+            else:
+                numPlayers = int(numPlayersInput)
             intCheck = False
         except ValueError:
            print("That's not an int!")
            numPlayers = input('please enter a real number between 1 and 4\n')
 
     # set global variables accordingly
-    if numPlayers == '':
-        __numPlayers=2
-    elif numPlayers > 4:
+    if numPlayers > 4:
        print('too high of a number, reducing to 4 players\n')
        __numPlayers=4
     else:
