@@ -38,13 +38,18 @@ def readCommands(player):
             else:
                 print('continuing turn')
         elif commandInput == 'trade':
-            playerToTrade = input('What player do you want to trade with?')
+            playerToTrade = lookUpPlayer(input('What player do you want to trade with?'))
             amountToTrade = int(input('How much do you want to trade?'))
             player.tradeMoney(playerToTrade,amountToTrade)
         elif commandInput == 'help':
             print('please use the following commands')
         else:
             print('command not recognized')
+
+def lookUpPlayer(playerName):
+    for player in __player:
+        if player.getName() == playerName:
+            return player
 
 class Player():
     # Global class variables
@@ -75,12 +80,12 @@ class Player():
     def subtractMoney(self, value):
         self.setMoney(self.getMoney() - value)
     def addMoney(self, value):
-        self.setMoney(self.getMoney + value)
+        self.setMoney(self.getMoney() + value)
     def tradeMoney(self,playerToTrade, amountToTrade):
         if self.getMoney() > amountToTrade:
             self.subtractMoney(amountToTrade)
             playerToTrade.addMoney(amountToTrade)
-            print(str(amountToTrade) + ' has been traded to ' + playerToTrade)
+            print(str(amountToTrade) + ' has been traded to ' + playerToTrade.getName())
         else:
             print('you do not have enough money in the bank to finish the transaction')
 
