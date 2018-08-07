@@ -62,6 +62,7 @@ def readCommands(player):
 
         # Trade with another player
         elif commandInput == 'trade':
+<<<<<<< HEAD
             print('players to trade:\n')
             for x in range(0,len(__player)):
                 print(str(x) + ':' + __player[x].getName())
@@ -71,11 +72,21 @@ def readCommands(player):
 
         # List each command and a description
         #TODO finish help
+=======
+            playerToTrade = lookUpPlayer(input('What player do you want to trade with?'))
+            amountToTrade = int(input('How much do you want to trade?'))
+            player.tradeMoney(playerToTrade,amountToTrade)
+>>>>>>> 0d14e18b5e92f751f50f94de935a3be97a681a9b
         elif commandInput == 'help':
             print('please use the following commands')
 
         else:
             print('command not recognized')
+
+def lookUpPlayer(playerName):
+    for player in __player:
+        if player.getName() == playerName:
+            return player
 
 class Player():
     # Global class variables
