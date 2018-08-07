@@ -31,30 +31,49 @@ def readCommands(player):
         playerTeamName = player.getTeam()
 
         # Read Command line input
-        commandInput = input('What do you want to do?')
+        commandInput = input('What do you want to do?\n')
 
-        # Exit condition, confirm on exit
+        # finish the turn not the game, confirm on exit
         if commandInput == 'finish':
             print( 'are you sure you want to finish your turn?')
-            commandInput = input("yes or no?")
+            commandInput = input('yes or no?\n')
             if commandInput.lower() == 'yes' or commandInput.lower() == 'y':
                 turnInProgress = False
             else:
                 print('continuing turn')
+
+        # Exit the game with this command, confirm on exit
         elif commandInput == 'exit':
             print('are you sure you want to finish your turn?')
-            commandInput = input('yes or no')
+            commandInput = input('yes or no\n')
             if commandInput.lower() == 'yes' or commandInput.lower() == 'y':
                 exit()
             else:
                 print('continuing turn')
 
+        # List the name of each player with the team they are on
+        elif commandInput == 'listPlayers':
+            for x in range(0,len(__player)):
+                print(str(x) + ':' + __player[x].getName())
+                print('\t' + __player[x].getTeam())
+
+        elif commandInput == 'balance':
+            print(str(player.getMoney()))
+
+        # Trade with another player
         elif commandInput == 'trade':
-            playerToTrade = input('What player do you want to trade with?')
-            amountToTrade = int(input('How much do you want to trade?'))
-            player.tradeMoney(playerToTrade,amountToTrade)
+            print('players to trade:\n')
+            for x in range(0,len(__player)):
+                print(str(x) + ':' + __player[x].getName())
+            playerToTrade = input('What player do you want to trade with? (choose a number)\n')
+            amountToTrade = int(input('How much do you want to trade?\n'))
+            player.tradeMoney(__player[int(playerToTrade)],amountToTrade)
+
+        # List each command and a description
+        #TODO finish help
         elif commandInput == 'help':
             print('please use the following commands')
+
         else:
             print('command not recognized')
 
@@ -87,12 +106,12 @@ class Player():
     def subtractMoney(self, value):
         self.setMoney(self.getMoney() - value)
     def addMoney(self, value):
-        self.setMoney(self.getMoney + value)
+        self.setMoney(self.getMoney() + value)
     def tradeMoney(self,playerToTrade, amountToTrade):
         if self.getMoney() > amountToTrade:
             self.subtractMoney(amountToTrade)
             playerToTrade.addMoney(amountToTrade)
-            print(str(amountToTrade) + ' has been traded to ' + playerToTrade)
+            print(str(amountToTrade) + ' has been traded to ' + playerToTrade.getName())
         else:
             print('you do not have enough money in the bank to finish the transaction')
 
@@ -114,9 +133,10 @@ if __name__ == "__main__":
         except ValueError:
            print("That's not an int!")
            numPlayers = input('please enter a real number between 1 and 4\n')
-
     # set global variables accordingly
-    if numPlayers > 4:
+    if numPlayersInput == '':
+        __numPlayers = 2
+    elif int(numPlayersInput) > 4:
        print('too high of a number, reducing to 4 players\n')
        __numPlayers=4
     else:
