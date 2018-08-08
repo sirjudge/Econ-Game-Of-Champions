@@ -2,7 +2,7 @@
 __numPlayers = 2
 __turnNum = 0
 __player = []
-
+__teams = []
 
 def startGame():
     # keeps track of which player is currently doing their turn
@@ -19,10 +19,9 @@ def startGame():
             gameTurn += 1
         else:
             playerTurn += 1
-        print('your turn is over' + currPlayer.getName())
+        print('your turn is over ' + currPlayer.getName() + '\n')
 
-
-# command reading
+# processes commands. Takes in the current player as a variable
 def readCommands(player):
     turnInProgress = True
     while turnInProgress:
@@ -52,12 +51,38 @@ def readCommands(player):
             else:
                 print('continuing turn')
 
+        # lists player name and player team
+        elif commandInput == 'whoami':
+            print('you are ' + player.getName() + ' on the team ' + player.getTeam())
+
         # List the name of each player with the team they are on
         elif commandInput == 'listPlayers':
             for x in range(0, len(__player)):
                 print(str(x) + ':' + __player[x].getName())
                 print('\t' + __player[x].getTeam())
 
+        # Team Related Commands
+        elif commandInput == 'listTeams':
+            for x in range(0,len(__teams)):
+                print(str(x) + ':'  + __teams[x])
+        elif commandInput == 'myTeam':
+            print(player.getTeam())
+        elif commandInput == 'changeTeam':
+            for x in range(0,len(__teams)):
+                print(str(x) + ':' + __teams[x])
+            teamNum = input('select a team number to change to')
+            if teamNum == '':
+                print('you have not selected any team, remaining on the same team')
+            elif teamNum > len(__teams):
+                print('that team number does not exist, remaining on the same team')
+            else:
+                player.setTeam(__teams[teamNum])
+
+        elif commandInput == 'createTeam':
+            teamName = input("what's your new team name?")
+            player.setTeam(teamName)
+
+        # Get current player's balance
         elif commandInput == 'balance':
             print(str(player.getMoney()))
 
@@ -78,7 +103,7 @@ def readCommands(player):
             print('command not recognized')
 
 
-""" 
+"""
 DAVID'S CODE
            # List each command and a description
            playerToTrade = lookUpPlayer(input('What player do you want to trade with?'))
@@ -98,30 +123,34 @@ class Player():
     _name = ''
     _team = ''
     _money = 0
+    _playerNumber = -1
 
-    def __init__(self, playerName, currMoney, team):
+    def __init__(self, playerName, currMoney, team, playerNum):
         self._name = playerName
         self._money = currMoney
         self._team = team
+        self._playerNumber = playerNum
 
     # Getters and setters
     def getTeam(self):
         return self._team
-
-    def setTeam(self, teamVal):
-        self._team = teamVal
+    def setTeam(self, teamName):
+        self._team = teamName
 
     def getMoney(self):
         return self._money
-
     def setMoney(self, moneyVal):
         self._money = moneyVal
 
     def getName(self):
         return self._name
-
     def setName(self, name):
         self._name = name
+
+    def getPlayerNum(self):
+        return self._playerNum
+    def setPlayerNum(self, playerNum):
+        self._playerNum = playerNum
 
     # Trading with other players
     def subtractMoney(self, value):
@@ -162,16 +191,31 @@ if __name__ == "__main__":
     elif int(numPlayersInput) > 4:
         print('too high of a number, reducing to 4 players\n')
         __numPlayers = 4
+
     else:
         __numPlayers = numPlayersInput
 
     # initialize player array
-    for x in range(0, __numPlayers):
+    for playerNumber in range(0, __numPlayers):
         # Set the player and team name
-        playerName = input('what is your name, player ' + str(x) + '?\n')
-        teamName = input('what is your team name ' + playerName + '?\n')
+        playerName = input('what is your name, player ' + str(playerNumber) + '?\n')
+
+        if len(__teams) < 1:
+            teamName = input('what would you like to call your team?\n')
+            __teams.append(teamName)
+        else:
+            answer = input('do you want to create a team or join a team?\n')
+            if answer == 'create':
+                teamName = input('what is your team name?\n')
+                __teams.append(teamName)
+            elif answer == 'join':
+                for x in range(0,len(__teams)):
+                    print(str(x) + ':' + __teams[x])
+                teamNum = input('select your team number\n')
+                teamName = __teams[int(teamNum)]
+
         # add new player object to the player array
-        newPlayer = Player(playerName, 100, teamName)
+        newPlayer = Player(playerName, 100, teamName, playerNumber)
         __player.append(newPlayer)
         print("welcome to the game " + playerName + '. You are with team ' + teamName)
     startGame()
