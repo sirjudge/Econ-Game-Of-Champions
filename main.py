@@ -40,6 +40,9 @@ def start_game():
     game_turn = 0
     # In order to stop playing set still_playing to false
     still_playing = True
+    print('playerNotification list:')
+    for x in __playerNotifications:
+        print(x)
     while still_playing:
         curr_player = __player[player_turn]
         read_commands(curr_player)
@@ -56,10 +59,13 @@ def read_commands(player):
     # set turn_in_progress to end the turn
     turn_in_progress = True
 
-    # temporarily store the current players stats
+    # store the current players stats
     player_name = player.get_name()
+    player_num = player.get_player_num()
 
+    # continue asking for a command until player is done with their turn
     while turn_in_progress:
+        # these player attributes can change so we need to make sure they are updated
         player_money = player.get_money()
         player_team_name = player.get_team()
 
@@ -77,12 +83,17 @@ def read_commands(player):
 
         # Exit the game with this command, confirm on exit
         elif command_input == 'exit':
-            print('are you sure you want to finish your turn?')
+            print('are you sure you want to exit the game?')
             command_input = input('yes or no\n')
             if command_input.lower() == 'yes' or command_input.lower() == 'y':
                 exit()
             else:
                 print('continuing turn')
+
+        # command for testing incrementation of player notifications
+        elif command_input == 'incNot':
+            __playerNotifications[player_num] += 1
+            print(__playerNotifications[player_num])
 
         # lists player name and player team
         elif command_input == 'whoami':
@@ -115,10 +126,15 @@ def read_commands(player):
             else:
                 player.set_team(__teams[team_num_to_change])
 
+        # check your inbox
+        elif command_input == 'checkMessages':
+            for message in __playerInboxes:
+                print(message)
+
         # send another player a message to their inbox
         elif command_input == 'message':
             print_players()
-            player_to_send = input('Who do you want to message?')
+            player_to_send = int(input('Who do you want to message?'))
             msg_to_send = input('what is the message to send?')
             __playerInboxes[player_to_send].append(msg_to_send)
             __playerNotifications[player_to_send] += 1
@@ -149,7 +165,7 @@ def read_commands(player):
 
 def print_players():
     for y in range(0, len(__player)):
-        print(str(y) + ':' + __player[x].get_name())
+        print(str(y) + ':' + __player[y].get_name())
 
 
 """
