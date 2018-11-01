@@ -8,7 +8,7 @@ __teams = []
 __app = gui('EconGame')
 __playerInboxes = []
 __playerNotifications = []
-
+__playerTradeList = []
 
 # function to print out the name of the button pressed
 # followed by the contents of the two entry boxes
@@ -52,6 +52,17 @@ def start_game():
         else:
             player_turn += 1
         print('your turn is over ' + curr_player.get_name() + '\n')
+
+
+# function takes in an amount and gives it to all the players
+def increase_economy(amount_to_raise):
+    for plyr in __player:
+        plyr.add_money(amount_to_raise)
+
+
+def create_notification(msg, player_num):
+    __playerInboxes[player_num].append(msg)
+    __playerNotifications[player_num] += 1
 
 
 # processes commands. Takes in the current player as a variable
@@ -156,6 +167,31 @@ def read_commands(player):
             amount_to_trade = input('How much do you want to trade?\n')
             player.trade_money(__player[int(player_to_trade)], int(amount_to_trade))
 
+            # EXPERIMENTAL TRADE CODE BELOW #
+            # __playerTradeList is the list of trades
+            # EXPERIMENTAL TRADE CODE ABOVE #
+
+            # TODO Finish these commands
+            # Find out what
+            p_input = input('1. Check my trades \n 2. Start a new trade  \n 3. Accept or Deny a trade')
+            if p_input == '1':
+                for q in range(0, len(__playerTradeList)):
+                    print(str(q) + '. ')
+            elif p_input == '2':
+                print('start a trade with who?')
+            elif p_input == '3':
+                print('accept or deny a trade')
+            elif p_input == '4':
+                print('DO something else')
+            else:
+                'command not recognized, please enter a valid command'
+            # if there are trades available
+            if len(__playerTradeList) > 0:
+                print('you have a trade list')
+            # If the player has no trades, the command won't run
+            else:
+                print('You have no trades, please enter a new command')
+
         # TODO add descriptions of each command
         elif command_input == 'help':
             print('please use the following commands')
@@ -166,15 +202,6 @@ def read_commands(player):
 def print_players():
     for y in range(0, len(__player)):
         print(str(y) + ':' + __player[y].get_name())
-
-
-"""
-DAVID'S CODE
-           # List each command and a description
-           playerToTrade = look_up_player(input('What player do you want to trade with?'))
-           amountToTrade = int(input('How much do you want to trade?'))
-           player.trade_money(playerToTrade,amountToTrade)
-"""
 
 
 def look_up_player(player_name):
@@ -301,9 +328,20 @@ if __name__ == "__main__":
                     teamName = input('that name is already taken, please choose another')
                     __teams.append(teamName)
 
-        # create the list of player inboxes to send messages to
+        '''
+        #=============================
+        # Defining and creating lists
+        #=============================
+        '''
+        # create the list of trades for each player
+        # will be a list of lists
+        # [n] where x is the number of trades
+        __playerTradeList = [[] for x in range(0, __numPlayers)]
+
+        # create the list of player inboxes  to send messages to
         __playerInboxes = [[] for x in range(0, __numPlayers)]
         __playerNotifications = [0 for x in range(0, __numPlayers)]
+
         # add new player object to the player array
         newPlayer = Player(playerName, 100, teamName, playerNumber)
         __player.append(newPlayer)
