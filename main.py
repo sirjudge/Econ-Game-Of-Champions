@@ -1,36 +1,11 @@
-from appJar import gui
-
 # Global Variables
 __numPlayers = 2
 __turnNum = 0
 __player = []
 __teams = []
-__app = gui('EconGame')
 __playerInboxes = []
 __playerNotifications = []
 __playerTradeList = []
-
-# function to print out the name of the button pressed
-# followed by the contents of the two entry boxes
-def press(btn_name):
-    print('buttonName:' + btn_name)
-    print(__app.getEntry('commandEntry'))
-    __app.setLabel('prevCommand', __app.getEntry('commandEntry'))
-
-
-def create_gui():
-    __app.addTextArea("t1", 0, 1)
-    __app.addLabel('previousCommand', 'previous command', 2, 0)
-    __app.addEmptyLabel('prevCommand', 2, 1)
-
-    __app.addLabel("commandLabel", "Command Input", 3, 0)
-    __app.addEntry("commandEntry", 3, 1)
-
-    __app.addButtons(["Submit", "Finish"], press, colspan=2)
-    __app.setFocus("commandEntry")
-    #    __app.enableEnter(press)
-    # Start the gui
-    __app.go()
 
 
 def start_game():
@@ -56,13 +31,22 @@ def start_game():
 
 # function takes in an amount and gives it to all the players
 def increase_economy(amount_to_raise):
-    for plyr in __player:
-        plyr.add_money(amount_to_raise)
+    for player in __player:
+        player.add_money(amount_to_raise)
 
 
 def create_notification(msg, player_num):
     __playerInboxes[player_num].append(msg)
     __playerNotifications[player_num] += 1
+
+
+# returns a list of trades involving the current player
+def check_my_trades(curr_player_num):
+    out = []
+    for trade in __playerTradeList:
+        if (trade.get_player_num_from() == curr_player_num) or (trade.get_player_to_num() == curr_player_num):
+            out.append(trade)
+    return out
 
 
 # processes commands. Takes in the current player as a variable
@@ -132,7 +116,7 @@ def read_commands(player):
             team_num_to_change = input('select a team number to change to')
             if team_num_to_change == '':
                 print('you have not selected any team, remaining on the same team')
-            elif team_num_to_change > len(__teams):
+            elif team_num_to_change > int(len(__teams)):
                 print('that team number does not exist, remaining on the same team')
             else:
                 player.set_team(__teams[team_num_to_change])
@@ -161,28 +145,34 @@ def read_commands(player):
 
         # Trade with another player
         elif command_input == 'trade':
-            print('players to trade:\n')
-            print_players()
-            player_to_trade = input('What player do you want to trade with? (choose a number)\n')
-            amount_to_trade = input('How much do you want to trade?\n')
-            player.trade_money(__player[int(player_to_trade)], int(amount_to_trade))
+            # TODO finish trade
+            # have user select what they want to do
+            p_input = input('1. Check my trades \n 2. Start a new trade  \n 3. Accept or reject a trade')
+            # Get a list of all trades either from or to the current player
+            my_trades = check_my_trades(player_num)
 
-            # EXPERIMENTAL TRADE CODE BELOW #
-            # __playerTradeList is the list of trades
-            # EXPERIMENTAL TRADE CODE ABOVE #
-
-            # TODO Finish these commands
-            # Find out what
-            p_input = input('1. Check my trades \n 2. Start a new trade  \n 3. Accept or Deny a trade')
+            # list all the trades player currently has
             if p_input == '1':
-                for q in range(0, len(__playerTradeList)):
-                    print(str(q) + '. ')
+                for open_trade in my_trades:
+                    print(open_trade)
+
+            # create a new trade
             elif p_input == '2':
-                print('start a trade with who?')
+                print_players()
+                player_to_trade_to = int(input('enter the player number of who you want to trade with'))
+                money_amount = int(input('how much money do you want to trade?'))
+                newTrade = Trade(player_to_trade_to, player_num, money_amount)
+                __playerTradeList.append(newTrade)
+
+            # Confirm or deny each trade you have
             elif p_input == '3':
                 print('accept or deny a trade')
-            elif p_input == '4':
-                print('DO something else')
+                for open_trade in my_trades:
+                    response = input('press [A] to accept the trade or [R] to reject the trade')
+                    print('')
+                    if response.lower() == 'a':
+                        if open_trade._playerToStatus == 'a' or open_trade._playerToStatus == 'w':
+                            player.trade_money()
             else:
                 'command not recognized, please enter a valid command'
             # if there are trades available
@@ -191,10 +181,11 @@ def read_commands(player):
             # If the player has no trades, the command won't run
             else:
                 print('You have no trades, please enter a new command')
-
-        # TODO add descriptions of each command
+        # prints the list of commands found in commandList.txt
         elif command_input == 'help':
-            print('please use the following commands')
+            help_file = open("commandList.txt", 'r')
+            for line in help_file:
+                print(line[:-1])
         else:
             print('command not recognized')
 
@@ -208,6 +199,47 @@ def look_up_player(player_name):
     for player in __player:
         if player.get_name() == player_name:
             return player
+
+
+class Trade:
+    # the player number of who is recieving the trade
+    _playerNumTo = ''
+    # player number of who is sending the trade
+    _playerNumFrom = ''
+    _moneyToTrade = -1
+
+    # Check to see if player has accepted, rejected, or sent new trade, or waiting response.
+    # All new trades start as follows
+    # n = new trade || a = accepted trade || r = rejected trade || w = waiting response
+    # playerFrom = 'n' playerTo = 'w'
+    _playerToStatus = 'w'
+    _playerFromStatus = 'n'
+
+    def __init(self, player_num_to, player_num_from, money_to_trade):
+        self._playerNumTo = player_num_to
+        self._playerNumFrom = player_num_from
+        self._moneyToTrade_moneyToTrade = money_to_trade
+
+    ####################
+    # Getters + setters#
+    ####################
+    def get_player_to_num(self):
+        return self._playerNumTo
+
+    def get_player_num_from(self):
+        return self._playerNumFrom
+
+    def get_money_to_trade(self):
+        return self._moneyToTrade
+
+    def set_player_to_num(self, p_num):
+        self._playerNumTo = p_num
+
+    def set_player_num_from(self, p_num):
+        self._playerNumFrom = p_num
+
+    def set_money_to_trade(self, money_amount):
+        self._moneyToTrade = money_amount
 
 
 class Player:
@@ -333,11 +365,6 @@ if __name__ == "__main__":
         # Defining and creating lists
         #=============================
         '''
-        # create the list of trades for each player
-        # will be a list of lists
-        # [n] where x is the number of trades
-        __playerTradeList = [[] for x in range(0, __numPlayers)]
-
         # create the list of player inboxes  to send messages to
         __playerInboxes = [[] for x in range(0, __numPlayers)]
         __playerNotifications = [0 for x in range(0, __numPlayers)]

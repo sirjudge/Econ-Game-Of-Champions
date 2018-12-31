@@ -1,0 +1,13 @@
+finish: ends your turn
+exit: exits the game
+incNot: increase the notification of the current player
+whoami: lists the current players name and team name
+listplayers: lists all the players in the game
+myTeam: lists your current team
+changeTeam: changes your team to another existing team
+checkMessages: checks current players messages
+message: send a message to another player
+createTeam: create a new team
+balance: check current player's balance
+trade: trade with another player
+help: lists all commands
