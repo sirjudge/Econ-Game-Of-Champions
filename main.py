@@ -113,10 +113,10 @@ def read_commands(player):
         elif command_input == 'changeTeam':
             for p in range(0, len(__teams)):
                 print(str(p) + ':' + __teams[x])
-            team_num_to_change = input('select a team number to change to')
+            team_num_to_change = int(input('select a team number to change to'))
             if team_num_to_change == '':
                 print('you have not selected any team, remaining on the same team')
-            elif team_num_to_change > int(len(__teams)):
+            elif team_num_to_change > (len(__teams)):
                 print('that team number does not exist, remaining on the same team')
             else:
                 player.set_team(__teams[team_num_to_change])
@@ -161,6 +161,8 @@ def read_commands(player):
                 print_players()
                 player_to_trade_to = int(input('enter the player number of who you want to trade with'))
                 money_amount = int(input('how much money do you want to trade?'))
+
+                #(self, player_num_to, player_num_from, money_to_trade):
                 newTrade = Trade(player_to_trade_to, player_num, money_amount)
                 __playerTradeList.append(newTrade)
 
@@ -215,7 +217,7 @@ class Trade:
     _playerToStatus = 'w'
     _playerFromStatus = 'n'
 
-    def __init(self, player_num_to, player_num_from, money_to_trade):
+    def __init__(self, player_num_to, player_num_from, money_to_trade):
         self._playerNumTo = player_num_to
         self._playerNumFrom = player_num_from
         self._moneyToTrade_moneyToTrade = money_to_trade
