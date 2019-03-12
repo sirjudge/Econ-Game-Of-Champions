@@ -29,26 +29,6 @@ def start_game():
         print('your turn is over ' + curr_player.get_name() + '\n')
 
 
-# function takes in an amount and gives it to all the players
-def increase_economy(amount_to_raise):
-    for player in __player:
-        player.add_money(amount_to_raise)
-
-
-def create_notification(msg, player_num):
-    __playerInboxes[player_num].append(msg)
-    __playerNotifications[player_num] += 1
-
-
-# returns a list of trades involving the current player
-def check_my_trades(curr_player_num):
-    out = []
-    for trade in __playerTradeList:
-        if (trade.get_player_num_from() == curr_player_num) or (trade.get_player_to_num() == curr_player_num):
-            out.append(trade)
-    return out
-
-
 # processes commands. Takes in the current player as a variable
 def read_commands(player):
     # set turn_in_progress to end the turn
@@ -203,46 +183,24 @@ def look_up_player(player_name):
             return player
 
 
-class Trade:
-    # the player number of who is recieving the trade
-    _playerNumTo = ''
-    # player number of who is sending the trade
-    _playerNumFrom = ''
-    _moneyToTrade = -1
+# function takes in an amount and gives it to all the players
+def increase_economy(amount_to_raise):
+    for player in __player:
+        player.add_money(amount_to_raise)
 
-    # Check to see if player has accepted, rejected, or sent new trade, or waiting response.
-    # All new trades start as follows
-    # n = new trade || a = accepted trade || r = rejected trade || w = waiting response
-    # playerFrom = 'n' playerTo = 'w'
-    _playerToStatus = 'w'
-    _playerFromStatus = 'n'
 
-    def __init__(self, player_num_to, player_num_from, money_to_trade):
-        self._playerNumTo = player_num_to
-        self._playerNumFrom = player_num_from
-        self._moneyToTrade_moneyToTrade = money_to_trade
+def create_notification(msg, player_num):
+    __playerInboxes[player_num].append(msg)
+    __playerNotifications[player_num] += 1
 
-    ####################
-    # Getters + setters#
-    ####################
-    def get_player_to_num(self):
-        return self._playerNumTo
 
-    def get_player_num_from(self):
-        return self._playerNumFrom
-
-    def get_money_to_trade(self):
-        return self._moneyToTrade
-
-    def set_player_to_num(self, p_num):
-        self._playerNumTo = p_num
-
-    def set_player_num_from(self, p_num):
-        self._playerNumFrom = p_num
-
-    def set_money_to_trade(self, money_amount):
-        self._moneyToTrade = money_amount
-
+# returns a list of trades involving the current player
+def check_my_trades(curr_player_num):
+    out = []
+    for trade in __playerTradeList:
+        if (trade.get_player_num_from() == curr_player_num) or (trade.get_player_to_num() == curr_player_num):
+            out.append(trade)
+    return out
 
 class Player:
     # Global class variables
