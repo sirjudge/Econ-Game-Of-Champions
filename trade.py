@@ -1,4 +1,5 @@
- #TRADE CLASS
+# TRADE CLASS
+
 
 class Trade:
     # the player number of who is recieving the trade
